@@ -1,0 +1,62 @@
+{
+  "name": "rspack",
+  "$schema": "node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "./src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/rspack:rspack",
+      "outputs": [
+        "{projectRoot}/build/__dev_build__",
+        "{projectRoot}/build/__prod_build__",
+        "{projectRoot}/build/__ci_build__"
+      ],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "web",
+        "outputPath": "// this will be overridden in rspack.config.js",
+        "main": "src/main.tsx",
+        "tsConfig": "tsconfig.app.json",
+        "rspackConfig": "rspack.config.js",
+        "assets": ["src/favicon.ico", "src/assets"]
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production",
+          "optimization": true,
+          "sourceMap": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/rspack:dev-server",
+      "options": {
+        "buildTarget": "rspack:build:development"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "buildTarget": "rspack:build:production"
+        }
+      }
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "rspack:build",
+        "spa": true
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectName}"],
+      "options": {
+        "jestConfig": "jest.config.ts"
+      }
+    }
+  }
+}
